@@ -19,6 +19,12 @@ Lien d'accès : http://ec2-13-38-62-17.eu-west-3.compute.amazonaws.com:5000/
 Voici un lien menant à la documentation du projet, celle-ci est sera mise à jour progressivement tout au long du développement.
 https://www.overleaf.com/read/vqtzdsqdfrpm
 
+
 ## Contribuer
 
 Pour contribuer au projet, référez-vous aux indications présentes dans le Contributing.md.
+
+## Notes 
+
+Ce projet a été exporté depuis GitLab c'est pourquoi il n'y a qu'un seul commit.
+Le platefrome n'est plus disponible, le serveur AWS a été désactivé pour éviter les frais inutiles. 
