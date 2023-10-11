@@ -1,0 +1,81 @@
+- name: Install Git, Docker, and Docker Compose
+  hosts: all
+  become: true # Admin
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+  tasks:
+    - name: Update apt packages
+      apt:
+        name: "*"
+        state: latest
+        update_cache: yes
+
+    - name: Install Git + Python
+      apt:
+        name:
+          - git
+          - python3
+          - python3-pip
+        state: present
+
+    - name: Install AWS CLI package
+      ansible.builtin.package:
+        name: awscli
+        state: present
+
+    - name: Install Docker Python library
+      pip:
+        name: docker
+        executable: pip3
+
+    - name: Install Docker
+      apt:
+        name: docker.io
+        state: present
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+
+    - name: Install Docker Compose
+      get_url:
+        url: "https://github.com/docker/compose/releases/latest/download/docker-compose-{{ ansible_system }}-{{ ansible_machine }}"
+        dest: /usr/local/bin/docker-compose
+        mode: 'a+x'
+
+    - name: Copy file to remote host
+      copy:
+        src: ../docker-compose.yml
+        dest: /home/ubuntu/docker-compose.yml
+
+    - name: Check if directory exists
+      stat:
+        path: /home/ubuntu/.aws
+      register: directory_stat
+
+    - name: Create directory
+      file:
+        path: /home/ubuntu/.aws
+        state: directory
+        mode: 0755
+      when: not directory_stat.stat.exists
+    
+    - name: Copy credentials file to remote host
+      copy:
+        src: ~/.aws/credentials
+        dest: /home/ubuntu/.aws/credentials
+
+    - name: ECR Docker get authorization token
+      shell: "aws ecr get-login-password --region eu-west-3 > cred && cat cred | docker login --username AWS --password-stdin 996154230850.dkr.ecr.eu-west-3.amazonaws.com/ecr-front:latest"
+    
+    - name: Pull Docker image
+      docker_image:
+        name: 996154230850.dkr.ecr.eu-west-3.amazonaws.com/ecr-front:latest
+        source: pull
+        
+    - name: Run container
+      shell:
+        cmd: "docker-compose -f docker-compose.yml up --force-recreate -d"
+        chdir: /home/ubuntu

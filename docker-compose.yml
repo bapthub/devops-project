@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  front: 
+    container_name: front
+    image: 996154230850.dkr.ecr.eu-west-3.amazonaws.com/ecr-front:latest
+    ports:
+      - "5000:5000"
+      - "27017:27017"

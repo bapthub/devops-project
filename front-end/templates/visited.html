@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'style.css') }}">
+    <title>Visited Cities</title>
+</head>
+<body>
+    <div class="container py-3">
+        <h1>Welcome, {{ username }}, to your Travel Map!</h1>
+        <h2>Visited Cities</h2>
+        <form action="/visited/{{ username }}" method="POST" class="form-inline my-2">
+            <label for="city" class="mr-2">Add a city:</label>
+            <input type="text" id="city" name="city" required class="form-control mr-2">
+            <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+        {% for message in get_flashed_messages() %}
+        <div class="alert alert-info">
+            {{ message }}
+        </div>
+        {% endfor %}
+        <h2>List of visited cities:</h2>
+        <ul class="list-group mb-4">
+            {% for city, lat, lon in cities %}
+            <li class="list-group-item">{{ city }} ({{ lat }}, {{ lon }})</li>
+            {% endfor %}
+        </ul>
+        <form action="/delete/{{ username }}" method="POST" onsubmit="return confirm('Are you sure you want to delete all your data ?');">
+            <button type="submit" class="btn btn-danger">Delete all registered cities</button>
+        </form>
+        <h2 class="my-4">Map of visited cities:</h2>
+        <iframe id="myIframe" class="w-100" style="height:600px;"{{ iframe|safe }}></iframe>
+    </div>
+</body>
+</html>
